@@ -1,7 +1,7 @@
 // Current Version
 #define VERSION "ArduiPRS v1.1 "
 // config file to defines callsign, ssid, symbols and home location
-#define MYCALL "NOCALL"
+//#define MYCALL "NOCALL"
 
 // Needed this to prevent compile error for #defines
 #if 1
@@ -579,7 +579,7 @@ void lcdScreen2() {
 
   lcd.setCursor(0,1);
   lcd.write("M:");
-  lcd.write(mCounter);    // Messages received
+  lcd.print(mCounter);    // Messages received
 
   //lcd.setCursor(0,1);
   //lcd.write("C:");
