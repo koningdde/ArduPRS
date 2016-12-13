@@ -8,7 +8,7 @@ const float HOME_LON = 04.45;
 //
 //
 // Custom Comments here
-#define COMMENT "Zet hier eventueel commentaar"
+#define COMMENT "Put comments here"
 
 
 
