@@ -5,13 +5,6 @@
 // home
 const float HOME_LAT = 50.49;
 const float HOME_LON = 04.45;
-//
-//
 // Custom Comments here
 #define COMMENT "Put comments here"
-
-
-
-
-
-
+#define MYCALL "NOCALL"
