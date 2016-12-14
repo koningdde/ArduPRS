@@ -1,8 +1,3 @@
-// Current Version
-#define VERSION "ArduiPRS v1.1 "
-// config file to defines callsign, ssid, symbols and home location
-//#define MYCALL "NOCALL"
-
 // Needed this to prevent compile error for #defines
 #if 1
 __asm volatile ("nop");
@@ -18,6 +13,7 @@ __asm volatile ("nop");
 //#include <TinyGPS++BD.h>
 #include <TinyGPS++.h>
 TinyGPSPlus gps;
+
 // The packet decoding libs
 #include <MicroAPRS.h>
 
@@ -68,7 +64,6 @@ AltSoftSerial ss(8, 9);
 // Map hw Serial2 to ss for gps port for other platform with hw serial
 #define ss Serial2
 #endif
-
 
 #ifdef DEBUG
 // Connect to GPS module on pin 9, 10 ( Rx, Tx )
@@ -121,7 +116,6 @@ float lastTxdistance, homeDistance, base = 0.0;
 
 // Used in the future for sending messages, commands to the tracker
 const unsigned int MAX_DEBUG_INPUT = 30;
-
 
 #ifdef I2C16X2
 /// LCD Large fonts
@@ -234,7 +228,9 @@ int x = 0;
 
 void setup()
 {
+#ifdef DUALMODE  
 if (digitalRead(modePin) == HIGH) {CALL_SSID = "5"; SYMBOL_CHAR = '[';}
+#endif
 
 #ifdef I2C16X2
   lcd.begin(16, 2);
@@ -578,7 +574,7 @@ void lcdScreen2() {
 
 
   lcd.setCursor(0,1);
-  lcd.write("M:");
+  lcd.print("M:");
   lcd.print(mCounter);    // Messages received
 
   //lcd.setCursor(0,1);
