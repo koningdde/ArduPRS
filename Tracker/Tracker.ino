@@ -112,7 +112,7 @@ int previousHeading, currentHeading = 0;
 // Initial lat/lng pos, change to your base station coordnates
 float lastTxLat = HOME_LAT;
 float lastTxLng = HOME_LON;
-float lastTxdistance, homeDistance, base = 0.0;
+double lastTxdistance, homeDistance, base = 0.0;
 
 // Used in the future for sending messages, commands to the tracker
 const unsigned int MAX_DEBUG_INPUT = 30;
@@ -587,7 +587,7 @@ void lcdScreen2() {
 
   lcd.setCursor(6, 1);
   lcd.print("A:");
-  lcd.print((unsigned int)gps.altitude.meters()); // Max 9999
+  lcd.print((int)gps.altitude.meters()); // Max 9999
   
   //lcd.setCursor(12,1);
   //lcd.write("L:");
