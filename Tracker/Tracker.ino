@@ -36,6 +36,7 @@ int minuut;
 int seconde;
 int headingDegrees;
 int hoogte;
+int nauwkeurigheid;
 String hoogte2;
 String CALL_SSID = "9";
 // Refer to http://wa8lmf.net/aprs/APRS_symbols.htm
@@ -73,6 +74,7 @@ SoftwareSerial debug(2, 3);
 #define debug Serial3
 #endif
 #endif
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Put All global defines here
@@ -112,7 +114,8 @@ int previousHeading, currentHeading = 0;
 // Initial lat/lng pos, change to your base station coordnates
 float lastTxLat = HOME_LAT;
 float lastTxLng = HOME_LON;
-double lastTxdistance, homeDistance, base = 0.0;
+float lastTxdistance, homeDistance;
+double base = 0.0;
 
 // Used in the future for sending messages, commands to the tracker
 const unsigned int MAX_DEBUG_INPUT = 30;
@@ -247,7 +250,7 @@ if (digitalRead(modePin) == HIGH) {CALL_SSID = "5"; SYMBOL_CHAR = '[';}
   lcd.begin(16, 2);
   lcd.print(VERSION);
   lcd.setCursor(0, 1);
-  lcd.print("PD1DDK");
+  lcd.print(MYCALL);
   if (CALL_SSID == "5"){ lcd.print(" HIKING");}
   else {lcd.print(" CAR");}
   delay(1000);
@@ -560,7 +563,7 @@ void lcdScreen2() {
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("B:");
-  lcd.print(base, 0);    // Max 999 afstanf tot thuis!
+  lcd.print(base, 0);    // Max 999 afstand tot thuis!
 
   lcd.setCursor(6, 0);
   lcd.print("T:");
@@ -588,7 +591,20 @@ void lcdScreen2() {
   lcd.setCursor(6, 1);
   lcd.print("A:");
   lcd.print((int)gps.altitude.meters()); // Max 9999
-  
+
+  if (gpsStatus){
+  nauwkeurigheid = (gps.hdop.value()/100);
+  lcd.setCursor(12, 1);
+  if (nauwkeurigheid <= 2) {
+    lcd.print("EXEL");
+    }
+  if (nauwkeurigheid > 2 & nauwkeurigheid <= 5) {
+    lcd.print("GOOD");
+    }
+  if (nauwkeurigheid > 5) {
+    lcd.print("POOR");
+    }
+  }
   //lcd.setCursor(12,1);
   //lcd.write("L:");
   //lcd.write((unsigned int)(millis()-lastRx)/1000);  // Print the seconds since last Rx
@@ -620,9 +636,18 @@ void lcdScreen3() {
   }
   lcd.print(gps.time.second());
 
+    if ( gps.satellites.value() < 10 ) {
+    lcd.setCursor(12, 0);
+    lcd.print(gps.satellites.value());
+    lcd.print("S");
+  } else {
+    lcd.setCursor(11, 0);
+    lcd.print(gps.satellites.value());
+    lcd.print("S");
+  }
 
-  lcd.print(" H:");
-  lcd.print(gps.hdop.value());
+  //lcd.print(" H:");
+  //lcd.print(gps.hdop.value());
 
   lcd.setCursor(0, 1);
   lcd.print(gps.location.lat(), 4);
@@ -1078,7 +1103,7 @@ void beep(int i) {
   }
 }
 
-#ifdef I2C16X2
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // LCD Large fonts
 void displayLargeSpeed(int num) {
@@ -1201,21 +1226,10 @@ void displayLargeSpeed(int num) {
       break;
   }
 
-  if ( gps.satellites.value() < 10 ) {
-    lcd.setCursor(14, 0);
-    lcd.print(gps.satellites.value());
-    lcd.print("s");
-  } else {
-    lcd.setCursor(13, 0);
-    lcd.print(gps.satellites.value());
-    lcd.print("s");
-  }
-
-  //lcd.write("S");
-
+  if (richtingGraden){
   // Print degree or N/S/E/W headings
-  lcd.setCursor(13, 1);
-  /*
+  lcd.setCursor(13, 0);
+  
   if ( gps.course.deg() < 10 ) {
     lcd.print("00");
     lcd.print(gps.course.deg(), 0);
@@ -1228,10 +1242,12 @@ void displayLargeSpeed(int num) {
     lcd.print(gps.course.deg(), 0);
     lcd.print("d");
   }
-*/
-  
-headingDegrees = (unsigned int)gps.course.deg();
+  }
 
+if (richtingRoos){
+  headingDegrees = (unsigned int)gps.course.deg();
+  lcd.setCursor(13, 1);
+  
   if (headingDegrees < 0 || headingDegrees > 360) {
   }
   else if (headingDegrees >= 0 && headingDegrees <= 11)
@@ -1303,6 +1319,8 @@ headingDegrees = (unsigned int)gps.course.deg();
     lcd.print("NNW");
   }
 }
+}
+
 
 void custom00()
 { // uses segments to build the number 0
@@ -1415,6 +1433,7 @@ void custom9()
   lcd.write(255);
 }
 
-#endif
+
+
 
 
